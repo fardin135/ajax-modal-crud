@@ -1,9 +1,10 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between">
         <div>
-            @include('users.component.createModal')
+            <input type="search" name="search" id="search" class="form-control mb-3" style="width: 500px;" placeholder="Search here...">
         </div>
         <div>
+            @include('users.component.createModal')
             @include('users.component.updateModal')
         </div>
     </div>
@@ -17,24 +18,78 @@
                 <th colspan="2">Action</th>
             </tr>
         </thead>
-        <tbody id="users-tbody">
-            {{-- <tr>
-                <td>asdasd</td>
-                <td>Namasdasdase</td>
-                <td>Emdasdasdaail</td>
-                <td>Passdasdsadsword</td>
-                <td>update</td>
-                <td>delete</td>
-            </tr> --}}
+        <tbody>
         </tbody>
     </table>
 </div>
 
-        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-        <script src="{{ asset('custom_js/custom.js') }}"></script>
-        <script src="{{ asset('ajax/jquery.js') }}"></script>
+@push('scripts')
 <script>
-
+    function loadUserData(data = {}) {
+        var content = '';
+            $.ajax({
+                type: 'GET',
+                url: '/api/get-users-data',
+                data:data,
+                success: function (response) {
+                    if (response.users.length>0) {
+                        $.each(response.users, function (key, value) {
+                            content +=
+                                // <td>+(key+1)+</td>
+                                // <a class="updateData" href='#' data-id="`+ value.id +`">Update</a>
+                                // <a class="deleteData" href='#' data-id="`+ value.id +`">Delete</a>
+                                `<tr>
+                                <td>`+value.id+`</td>
+                                <td>`+value.name+`</td>
+                                <td>`+value.email+`</td>
+                                <td>`+value.password+`</td>
+                                <td><button class=" btn btn-success updateData" data-id="`+ value.id +`" data-bs-toggle="modal" data-bs-target="#userUpdate">Update</button></td>
+                                <button type="button" class="btn btn-success" >Update New User</button>
+                                <td><button class=" btn btn-danger deleteData" data-id="`+ value.id +`">Delete</button></td>
+                                <tr>`
+                            });
+                            $('#users-table tbody').html(content);
+                    } else {
+                        $('#users-table tbody').html("<tr><td colspan='6'>No Data Found</td></tr>");
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            });
+    };
+</script>
+<script>
+    $(document).ready(()=>{
         loadUserData();
-
+        $('#users-table').on('click','.deleteData',function(){
+            // event.preventDefault();
+            var id = $(this).attr('data-id');
+            // alert(id);
+                $.ajax({
+                    url:'/delete-users-data/'+id,
+                    type:'GET',
+                    success:(response)=>{
+                        // response.preventDefault();
+                        console.log(response.message);
+                        // alert(response.message);
+                        // window.open('/users');
+                        loadUserData();
+                    },
+                    error:(error)=>{
+                        console.log(error);
+                        // alert(error);
+                    },
+                });
+            });
+        });
     </script>
+    <script>
+    $(document).ready(()=>{
+        $('#search').on('keyup',function(){
+            search = $('#search').val();
+            loadUserData({search});
+            });
+        });
+    </script>
+@endpush

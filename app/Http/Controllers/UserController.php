@@ -10,12 +10,13 @@ class UserController extends Controller
 {
     public function getUserData(Request $request) {
         $query = User::query();
-        if (!$request->search) {
-            $users = $query->orderBy('id','desc')->get();
-        }else {
-            $users = $query->where('name','LIKE', $request->search.'%')
-            ->orWhere('email', 'LIKE', $request->search . '%')
-            ->get();
+        if ($request->search) {
+            $users = $query->where('name', 'LIKE', $request->search . '%')
+                ->orWhere('email', 'LIKE',  '%' . $request->search . '%')
+                ->orWhere('location', 'LIKE', $request->search . '%')
+                ->get();
+            }else {
+                $users = $query->orderBy('id','desc')->get();
         }
         return response()->json([
             'users'=> $users

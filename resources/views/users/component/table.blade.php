@@ -4,6 +4,15 @@
             <input type="search" name="search" id="search" class="form-control mb-3" style="width: 500px;" placeholder="Search here...">
         </div>
         <div>
+            <select class="form-control " id="select" name="select" >
+                <option value="All">Show All Data</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Jamalpur">Chittagong</option>
+                <option value="Mymensingh">Rangpur</option>
+                <option value="Mymensingh">Barisal</option>
+            </select>
+        </div>
+        <div>
             @include('users.component.createModal')
             @include('users.component.updateModal')
         </div>
@@ -14,6 +23,7 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Location</th>
                 <th>Password</th>
                 <th colspan="2">Action</th>
             </tr>
@@ -42,6 +52,7 @@
                                 <td>`+value.id+`</td>
                                 <td>`+value.name+`</td>
                                 <td>`+value.email+`</td>
+                                <td>`+value.location+`</td>
                                 <td>`+value.password+`</td>
                                 <td><button class=" btn btn-success updateData" data-id="`+ value.id +`" data-bs-toggle="modal" data-bs-target="#userUpdate">Update</button></td>
                                 <button type="button" class="btn btn-success" >Update New User</button>
@@ -84,12 +95,22 @@
             });
         });
     </script>
-    <script>
+<script>
     $(document).ready(()=>{
         $('#search').on('keyup',function(){
             search = $('#search').val();
             loadUserData({search});
             });
         });
-    </script>
+</script>
+{{-- <script>
+    $(document).ready(()=>{
+        $('#select').on('click')
+        <option value="Dhaka">Dhaka</option>
+        $('#select').on('click',function(){
+            select = $('#select').val();
+            loadUserData({select});
+            });
+        });
+</script> --}}
 @endpush
